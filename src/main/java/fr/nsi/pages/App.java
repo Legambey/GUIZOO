@@ -19,6 +19,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 
 public class App extends Panel {
     GridPane sidemenu = new GridPane();
@@ -29,11 +32,21 @@ public class App extends Panel {
 
     Button homeBtn, settingsBtn;
 
-    private static File dbFile;
-
     public App(File dbFile){
-        App.dbFile = dbFile;
+        try {
+            String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
+            Connection con = DriverManager.getConnection(url);
+            String selectQuery = "SELECT name from sqlite_master WHERE type='table'";
+            ResultSet results = con.createStatement().executeQuery(selectQuery);
+            while (results.next()){
+                System.out.println(results.getString("name"));
+            }
+            con.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
+
     @Override
     public String getName() {
         return null;
@@ -47,7 +60,6 @@ public class App extends Panel {
     @Override
     public void init(PanelManager panelManager) {
         super.init(panelManager);
-        System.out.println(dbFile.getAbsolutePath());
         // Layout
         this.layout.getStyleClass().add("app-layout");
         setCanTakeAllSize(this.layout);
