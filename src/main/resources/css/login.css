@@ -1,0 +1,89 @@
+.main-panel{
+    -fx-background-color: white;
+}
+
+.main-panel-dark {
+    -fx-background-color: rgb(50,50,50);
+}
+
+.bg-image {
+    -fx-background-image: url("/images/bg.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-position: center;
+}
+
+.main-panel .login-title {
+    -fx-text-fill: rgb(20, 25, 25);
+}
+
+.main-panel-dark .login-title-dark{
+    -fx-text-fill: rgb(130,130,130)
+}
+
+.main-panel .login-input {
+    -fx-background-color: rgb(220, 225, 225);
+    -fx-font-size: 16px;
+    -fx-background-radius: 10px;
+    -fx-prompt-text-fill: rgb(150, 150, 150);
+    -fx-text-full: rgb(20, 20, 20);
+}
+
+.main-panel .login-error {
+    -fx-text-fill: rgb(245, 20, 20);
+    -fx-font-size: 14px;
+    -fx-font-style: italic;
+}
+
+.main-panel .login-log-btn {
+    -fx-background-radius: 10px;
+    -fx-font-size: 16px;
+    -fx-text-fill: #F5F5F5;
+    -fx-background-color: rgb(233,120,0);
+    -fx-text-fill: rgb(50,50,50)
+}
+
+.main-panel .login-log-btn:hover {
+    -fx-background-color: rgb(233,120,50);
+}
+
+.main-panel .login-log-btn:disabled {
+    -fx-background-color: rgb(150, 155, 155);
+    -fx-text-fill: rgb(80, 80, 80);
+}
+
+.main-panel .login-separator {
+    -fx-border-color: #98BB6D;
+    -fx-border-width: 1 0 0 0 ;
+}
+
+.main-panel .ms-login-btn {
+    -fx-background-color: rgb(230, 235, 235);
+}
+.ms-login-btn-dark{
+    -fx-background-color: rgb(100,100,100);
+}
+
+.main-panel .ms-login-btn:hover {
+    -fx-background-color: rgb(233,120,50);
+}
+
+.main-panel-dark .ms-login-btn-dark:hover{
+    -fx-background-color: rgb(150,150,150);
+}
+.bottom-panel {
+    -fx-background-color: #181818;
+    -fx-opacity: 50%;
+}
+.main-panel{
+    -fx-background-color: #181818;
+    -fx-opacity: 85%;
+}
+
+.no-account{
+    -fx-text-fill: #bcc6e7;
+}
+
+.connect-separator{
+    -fx-background-color: #fff;
+    -fx-opacity: 50%;
+}

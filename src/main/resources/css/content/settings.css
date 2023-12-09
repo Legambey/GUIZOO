@@ -1,0 +1,99 @@
+.settings-layout {
+    -fx-background-color: rgb(215, 220, 220);
+}
+
+.settings-layout-dark{
+    -fx-background-color: rgb(75,75,75);
+}
+
+.settings-title {
+    -fx-text-fill: #fff;
+}
+
+.content-pane,  {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.settings-labels {
+    -fx-text-fill: #fff;
+    -fx-font-size: 15px;
+}
+    /*
+    Ram Selector
+    */
+.selector-text {
+    -fx-text-fill: rgb(20, 25, 25);
+    -fx-font-size: 12px;
+}
+
+.selector {
+    -fx-width: 200px;
+    -fx-height: 25px;
+    -fx-background-color: rgb(150,150,150,0.3);
+    -fx-text-fill: rgb(125,125,125);
+}
+.selector .arrow-button .arrow {
+    -fx-background-color: white;
+}
+.selector .list-view {
+    -fx-background-color: rgb(150, 150, 150, 0.3);
+}
+
+.selector .list-cell {
+    -fx-text-fill: white;
+}
+.selector .list-cell:selected{
+    -fx-text-fill: rgb(233,120,0);
+}
+
+.selector .list-cell:hover {
+    -fx-text-fill: white;
+    -fx-background-color: rgb(233, 120, 0, 0.5);
+}
+
+.selector .track {
+    -fx-background-color: rgb(100,100,100,0.1);
+}
+
+
+.selector .thumb {
+    -fx-background-color: rgb(233,120,0);
+}
+
+.save-btn {
+    -fx-border-radius: 0;
+    -fx-font-size: 16px;
+    -fx-text-fill: #F5F5F5;
+    -fx-background-color: #115ffa;
+}
+
+.save-icon {
+    -fx-fill: white;
+}
+
+.save-btn:hover {
+    -fx-background-color: #115ffa;
+}
+
+
+.check-box {
+    -fx-text-fill: #fff;
+}
+
+.check-box .box {
+    -fx-border-width: 0;
+    -fx-border-radius: 10px;
+    -fx-background-color: rgb(220, 225, 225);
+}
+
+.check-box:selected .box {
+    -fx-background-color: #115ffa;
+}
+
+.check-box:selected .box .mark {
+    visibility: hidden;
+}
