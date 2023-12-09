@@ -20,8 +20,10 @@ import javafx.scene.layout.Priority;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.*;
 
 public class App extends Panel {
     GridPane sidemenu = new GridPane();
@@ -30,18 +32,35 @@ public class App extends Panel {
     Node activeLink = null;
     ContentPanel currentPage = null;
 
-    Button homeBtn, settingsBtn;
+    Button homeBtn;
 
     public App(File dbFile){
         try {
             String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
-            Connection con = DriverManager.getConnection(url);
-            String selectQuery = "SELECT name from sqlite_master WHERE type='table'";
-            ResultSet results = con.createStatement().executeQuery(selectQuery);
+            Connection conn = DriverManager.getConnection(url);
+
+            //Get all DB tables
+            String selectTablesQuery = "SELECT name from sqlite_master WHERE type='table'";
+            ResultSet results = conn.createStatement().executeQuery(selectTablesQuery);
+
+            //Define a dictionary that will contain all the tables and their data
+            Map<String, List<String>> architecture = new HashMap<>();
             while (results.next()){
-                System.out.println(results.getString("name"));
+                architecture.put(results.getString("name"), new ArrayList<>());
             }
-            con.close();
+
+            //Iterate all tables
+            for(String table : architecture.keySet()) {
+                //Get all columns of the table
+                DatabaseMetaData metaData = conn.getMetaData();
+                ResultSet resultSet = metaData.getColumns(null, null, table, null);
+
+                while (resultSet.next()) {
+                    architecture.get(table).add(resultSet.getString("COLUMN_NAME"));
+                }
+            }
+
+            conn.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +106,7 @@ public class App extends Panel {
         navContent.getStyleClass().add("nav-content");
 
 
-        Image logoIroxxy = new Image(Main.class.getResource("/images/icon.png").toExternalForm());
+        Image logoIroxxy = new Image(Objects.requireNonNull(Main.class.getResource("/images/icon.png")).toExternalForm());
         ImageView imageViewIroxxy = new ImageView(logoIroxxy);
         GridPane.setVgrow(imageViewIroxxy, Priority.ALWAYS);
         GridPane.setHgrow(imageViewIroxxy, Priority.ALWAYS);
