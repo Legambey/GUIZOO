@@ -40,7 +40,6 @@ public class ChooseMenu extends Panel {
         GridPane mainPanel = new GridPane();
         mainPanel.getStyleClass().add("main-panel");
 
-
         loginPanel.setMaxWidth(600);
         loginPanel.setMinWidth(600);
         loginPanel.setMaxHeight(200);

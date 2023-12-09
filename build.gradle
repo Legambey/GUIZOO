@@ -19,11 +19,11 @@ repositories {
     }
 }
 
-
 dependencies {
     implementation 'de.jensd:fontawesomefx-fontawesome:4+'
     implementation 'com.github.goxr3plus:FX-BorderlessScene:4+'
     implementation 'org.json:json:+'
+    implementation 'org.xerial:sqlite-jdbc:+'
 }
 
 application {
