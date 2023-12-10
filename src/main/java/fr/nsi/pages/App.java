@@ -116,7 +116,7 @@ public class App extends Panel {
         imageViewIroxxy.setFitWidth(28);
 
         // Navigation
-        homeBtn = new Button("          Survie Iroxxy");
+        homeBtn = new Button("Requêtes SQL");
         homeBtn.getStyleClass().add("sidemenu-nav-btn");
         homeBtn.setGraphic(imageViewIroxxy);
         setCanTakeAllSize(homeBtn);
