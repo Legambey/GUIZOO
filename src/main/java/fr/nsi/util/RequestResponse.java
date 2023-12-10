@@ -18,12 +18,13 @@ public class RequestResponse{
         if (updated) return updateCount + "colonnes affectées";
 
         StringBuilder repr = new StringBuilder();
-        for (String column : data.keySet()) {
+        List<String> columns = getColumns();
+
+        for (String column : columns) {
             repr.append("[").append(column).append("] | ");
         }
         repr.append("\n");
 
-        List<String> columns = data.keySet().stream().toList();
         for (int i = 0; i < data.get(columns.get(0)).size(); i++) {
             for (String column : columns) {
                 repr.append(data.get(column).get(i)).append(" ");
@@ -32,6 +33,10 @@ public class RequestResponse{
         }
 
         return repr.toString();
+    }
+
+    public List<String> getColumns(){
+        return data.keySet().stream().toList();
     }
 
     public Map<String, List<Object>> getData() {
