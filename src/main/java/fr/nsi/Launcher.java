@@ -12,15 +12,15 @@ public class Launcher extends Application {
     public Launcher() {
         instance = this;
     }
+
     public static Launcher getInstance() {
         return instance;
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         this.panelManager = new PanelManager(this, stage);
         this.panelManager.init();
         this.panelManager.showPanel(new ChooseMenu());
-
     }
 }

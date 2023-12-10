@@ -4,7 +4,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import fr.nsi.Main;
 import fr.nsi.content.ContentPanel;
-import fr.nsi.content.Home;
+import fr.nsi.content.RequestPage;
 import fr.nsi.panel.Panel;
 import fr.nsi.ui.PanelManager;
 import javafx.geometry.HPos;
@@ -19,10 +19,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.*;
 
 public class App extends Panel {
@@ -31,17 +28,17 @@ public class App extends Panel {
 
     Node activeLink = null;
     ContentPanel currentPage = null;
-
     Button homeBtn;
 
+    static File dbFile;
     public App(File dbFile){
         try {
-            String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
-            Connection conn = DriverManager.getConnection(url);
+            App.dbFile = dbFile;
+            Connection connection = getConnection();
 
             //Get all DB tables
             String selectTablesQuery = "SELECT name from sqlite_master WHERE type='table'";
-            ResultSet results = conn.createStatement().executeQuery(selectTablesQuery);
+            ResultSet results = connection.createStatement().executeQuery(selectTablesQuery);
 
             //Define a dictionary that will contain all the tables and their data
             Map<String, List<String>> architecture = new HashMap<>();
@@ -52,18 +49,21 @@ public class App extends Panel {
             //Iterate all tables
             for(String table : architecture.keySet()) {
                 //Get all columns of the table
-                DatabaseMetaData metaData = conn.getMetaData();
+                DatabaseMetaData metaData = connection.getMetaData();
                 ResultSet resultSet = metaData.getColumns(null, null, table, null);
 
                 while (resultSet.next()) {
                     architecture.get(table).add(resultSet.getString("COLUMN_NAME"));
                 }
             }
-
-            conn.close();
+            connection.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
     }
 
     @Override
@@ -124,7 +124,7 @@ public class App extends Panel {
         homeBtn.setTranslateY(90d);
         homeBtn.setOnMouseEntered(e -> this.layout.setCursor(Cursor.HAND));
         homeBtn.setOnMouseExited(e -> this.layout.setCursor(Cursor.DEFAULT));
-        homeBtn.setOnMouseClicked(e -> setPage(new Home(), homeBtn));
+        homeBtn.setOnMouseClicked(e -> setPage(new RequestPage(), homeBtn));
 /*
         settingsBtn = new Button("Paramètres");
         settingsBtn.getStyleClass().add(saver.get("theme") == null ? "sidemenu-nav-btn-dark" : Integer.parseInt(saver.get("theme")) == 0 ? "sidemenu-nav-btn" : "sidemenu-nav-btn-dark");
@@ -163,7 +163,7 @@ public class App extends Panel {
         logoutBtn.getStyleClass().add("logout-btn");
         logoutBtn.setGraphic(logoutIcon);
         logoutBtn.setOnMouseClicked(e -> {
-            if (currentPage instanceof Home) {
+            if (currentPage instanceof RequestPage) {
                 this.panelManager.showPanel(new ChooseMenu());
             }
         });
@@ -175,7 +175,7 @@ public class App extends Panel {
     @Override
     public void onShow() {
         super.onShow();
-        setPage(new Home(), homeBtn);
+        setPage(new RequestPage(), homeBtn);
     }
 
     public void setPage(ContentPanel panel, Node navButton) {
