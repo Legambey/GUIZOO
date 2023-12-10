@@ -63,7 +63,6 @@ public class RequestPage extends ContentPanel {
             try {
                 String response = DBUtils.request(App.getConnection(), textArea.getText());
                 label1.setText(response);
-                System.out.println(response);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

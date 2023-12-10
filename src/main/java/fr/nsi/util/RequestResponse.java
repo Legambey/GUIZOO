@@ -15,7 +15,6 @@ public class RequestResponse{
     }
 
     public String getAsString(){
-        System.out.println(data);
         if (updated) return updateCount + "colonnes affectées";
 
         StringBuilder repr = new StringBuilder();
