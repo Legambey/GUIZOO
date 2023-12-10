@@ -59,11 +59,9 @@ public class RequestPage extends ContentPanel {
         GridPane.setConstraints(button, 1, 1);
         GridPane.setHalignment(button, HPos.LEFT);
         button.setOnAction(event -> {
-            System.out.println("Executed: " + textArea.getText());
             try {
                 String response = DBUtils.request(App.getConnection(), textArea.getText());
                 label1.setText(response);
-                System.out.println(response);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
