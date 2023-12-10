@@ -1,9 +1,9 @@
 package fr.nsi.content;
 
+import fr.nsi.pages.App;
 import fr.nsi.ui.PanelManager;
+import fr.nsi.util.DBUtils;
 import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -11,7 +11,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-public class Home extends ContentPanel {
+import java.sql.SQLException;
+
+public class RequestPage extends ContentPanel {
     @Override
     public void init(PanelManager panelManager) {
         super.init(panelManager);
@@ -45,22 +47,28 @@ public class Home extends ContentPanel {
         GridPane.setConstraints(textArea, 0, 1);
         GridPane.setHalignment(textArea, HPos.LEFT);
 
-
-        Button button = new Button("Executer");
-        setCanTakeAllSize(button);
-        GridPane.setConstraints(button, 1, 1);
-        GridPane.setHalignment(button, HPos.LEFT);
-        button.setOnAction(event -> {
-            System.out.println(textArea.getText());
-        });
-        gridPane.getChildren().addAll(label, textArea, button);
-
         GridPane gridPane1 = new GridPane();
         gridPane1.setStyle("-fx-background-color: #000000");
         Label label1 = new Label("Bienvenue sur le launcher de NSI");
         setCanTakeAllSize(label1);
         gridPane1.getChildren().addAll(label1);
         vBox.getChildren().addAll(gridPane, gridPane1);
+
+        Button button = new Button("Executer");
+        setCanTakeAllSize(button);
+        GridPane.setConstraints(button, 1, 1);
+        GridPane.setHalignment(button, HPos.LEFT);
+        button.setOnAction(event -> {
+            System.out.println("Executed: " + textArea.getText());
+            try {
+                String response = DBUtils.request(App.getConnection(), textArea.getText());
+                label1.setText(response);
+                System.out.println(response);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        gridPane.getChildren().addAll(label, textArea, button);
     }
 
     @Override
