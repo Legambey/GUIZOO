@@ -10,20 +10,10 @@
     -fx-bakground-color: rgb(255,255,255);
     -fx-border-color: rgb(255,255,255);
 }
-.iroxxy-title{
-    -fx-text-fill: #fff;
-}
-.iroxxy-details{
-    -fx-text-fill: #fff;
-}
-.iroxxy-desc{
-    -fx-text-fill: #bcc6e7;
-}
-.play-btn{
-    -fx-background-color: #115ffa;
+.btn{
     -fx-border-radius: 0;
     -fx-background-insets: 0;
-    -fx-text-fill: #fff;
+    -fx-text-fill: #000000;
 }
 .step-label{
     -fx-text-fill: #fff;

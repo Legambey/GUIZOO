@@ -1,10 +1,12 @@
 package fr.nsi.util;
 
+import javafx.scene.control.TextArea;
 import javafx.util.Pair;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class DBUtils {
     public static String request(Connection connection, String request) throws SQLException {
@@ -15,7 +17,7 @@ public class DBUtils {
             Statement stmt = connection.createStatement();
             stmt.execute(request);
 
-            //Check if the request was a SELECT
+            //Check if the request is a SELECT
             if(stmt.getUpdateCount() == -1){
                 response = new RequestResponse(false, -1, new HashMap<>());
 
@@ -46,14 +48,25 @@ public class DBUtils {
         return response.getAsString();
     }
 
+    public static String requestExample(Connection connection, TextArea textArea) throws SQLException {
+        String[] requests = {"SELECT DISTINCT fonction FROM LesCages;",
+                "SELECT nomA FROM LesAnimaux WHERE type = 'leopard';",
+                "SELECT LesAnimaux.nomA, nomM, noCage FROM LesAnimaux JOIN LesMaladies ON (LesAnimaux.nomA=LesMaladies.nomA);",
+                "SELECT DISTINCT e.nomE, fonction FROM LesEmployes AS e JOIN LesGardiens AS g ON (e.nomE = g.nomE) JOIN LesCages AS c ON (g.noCage = c.noCage) WHERE e.adresse IS 'Calvi';"};
+        Random r = new Random();
+        String request = requests[r.nextInt(requests.length)];
+        textArea.setText(request);
+        return request(connection, request);
+    }
+
     public static void insert(Connection connection, String table, Object... values) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("INSERT INTO ").append(table).append(" VALUES");
+        queryBuilder.append("INSERT INTO ").append(table).append(" VALUES(");
 
         for (Object value : values) {
             queryBuilder.append("'").append(value).append("', ");
         }
-        queryBuilder.reverse().replace(0, 1, "").reverse();
+        queryBuilder.reverse().replace(0, 1, "").reverse().append(")");
         request(connection, queryBuilder.toString());
     }
 
@@ -66,10 +79,7 @@ public class DBUtils {
         }
 
         queryBuilder.append(" WHERE ");
-        for (Pair<String, Object> cond : conditions) {
-            queryBuilder.append(cond.getKey()).append(" = ").append(cond.getValue()).append(" AND ");
-        }
-        queryBuilder.append("1=1");
+        addConditions(conditions, queryBuilder);
         request(connection, queryBuilder.toString());
     }
 
@@ -77,10 +87,17 @@ public class DBUtils {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("DELETE FROM ").append(table).append(" WHERE ");
 
-        for (Pair<String, Object> cond : conditions) {
-            queryBuilder.append(cond.getKey()).append(" = ").append(cond.getValue()).append(" AND ");
+        addConditions(conditions, queryBuilder);
+        request(connection, queryBuilder.toString());
+    }
+
+    private static void addConditions(Pair<String, Object>[] conditions, StringBuilder queryBuilder) {
+        if(conditions.length == 0) queryBuilder.replace(queryBuilder.length() - 7, queryBuilder.length(), "");
+        else {
+            for (Pair<String, Object> cond : conditions) {
+                queryBuilder.append(cond.getKey()).append(" = ").append(cond.getValue()).append(" AND ");
+            }
         }
         queryBuilder.append("1=1");
-        request(connection, queryBuilder.toString());
     }
 }
