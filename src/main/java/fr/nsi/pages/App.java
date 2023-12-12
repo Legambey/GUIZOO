@@ -4,6 +4,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import fr.nsi.Main;
 import fr.nsi.content.ContentPanel;
+import fr.nsi.content.ManagePage;
 import fr.nsi.content.RequestPage;
 import fr.nsi.panel.Panel;
 import fr.nsi.ui.PanelManager;
@@ -28,7 +29,7 @@ public class App extends Panel {
 
     Node activeLink = null;
     ContentPanel currentPage = null;
-    Button homeBtn;
+    Button homeBtn, manageBtn;
 
     static File dbFile;
     public App(File dbFile){
@@ -106,35 +107,27 @@ public class App extends Panel {
         navContent.getStyleClass().add("nav-content");
 
 
-        Image logoIroxxy = new Image(Objects.requireNonNull(Main.class.getResource("/images/icon.png")).toExternalForm());
-        ImageView imageViewIroxxy = new ImageView(logoIroxxy);
-        GridPane.setVgrow(imageViewIroxxy, Priority.ALWAYS);
-        GridPane.setHgrow(imageViewIroxxy, Priority.ALWAYS);
-        GridPane.setValignment(imageViewIroxxy, VPos.CENTER);
-        imageViewIroxxy.setTranslateX(34);
-        imageViewIroxxy.setFitHeight(28);
-        imageViewIroxxy.setFitWidth(28);
 
         // Navigation
         homeBtn = new Button("Requêtes SQL");
         homeBtn.getStyleClass().add("sidemenu-nav-btn");
-        homeBtn.setGraphic(imageViewIroxxy);
         setCanTakeAllSize(homeBtn);
         setTop(homeBtn);
+        homeBtn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.DATABASE));
         homeBtn.setTranslateY(90d);
         homeBtn.setOnMouseEntered(e -> this.layout.setCursor(Cursor.HAND));
         homeBtn.setOnMouseExited(e -> this.layout.setCursor(Cursor.DEFAULT));
         homeBtn.setOnMouseClicked(e -> setPage(new RequestPage(), homeBtn));
-/*
-        settingsBtn = new Button("Paramètres");
-        settingsBtn.getStyleClass().add(saver.get("theme") == null ? "sidemenu-nav-btn-dark" : Integer.parseInt(saver.get("theme")) == 0 ? "sidemenu-nav-btn" : "sidemenu-nav-btn-dark");
-        settingsBtn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.GEARS));
-        setCanTakeAllSize(settingsBtn);
-        setTop(settingsBtn);
-        settingsBtn.setTranslateY(130d);
-        settingsBtn.setOnMouseClicked(e -> setPage(new Settings(), settingsBtn));
-*/
-        sidemenu.getChildren().addAll(homeBtn);
+
+        manageBtn = new Button("Gerer la bdd");
+        manageBtn.getStyleClass().add("sidemenu-nav-btn");
+        manageBtn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.GEARS));
+        setCanTakeAllSize(manageBtn);
+        setTop(manageBtn);
+        manageBtn.setTranslateY(130d);
+        manageBtn.setOnMouseClicked(e -> setPage(new ManagePage(), manageBtn));
+
+        sidemenu.getChildren().addAll(homeBtn,manageBtn);
 
         // Pseudo + avatar
         GridPane userPane = new GridPane();
