@@ -45,7 +45,7 @@ public class TopBar extends Panel {
         this.layout.getChildren().add(imageView);
 
         // TopBar: center
-        Label title = new Label("GOUI ZOO");
+        Label title = new Label("GUI ZOO");
         title.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
         title.setStyle("-fx-text-fill: #bcc6e7");
         setCenterH(title);

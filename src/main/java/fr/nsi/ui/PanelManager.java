@@ -39,7 +39,7 @@ public class PanelManager {
         double b = (h + 40) / x;
 
 
-        this.stage.setTitle("GOUI ZOO");
+        this.stage.setTitle("GUI ZOO");
         this.stage.setMinWidth(w / 2 + 350);
         this.stage.setMinHeight((h + 40) / 2);
         this.stage.setMinWidth(350);
