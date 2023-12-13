@@ -53,7 +53,7 @@ public class PanelManager {
 
         this.layout = new GridPane();
         //background color gray
-        this.layout.setStyle("-fx-background-color: #777676;");
+        this.layout.setStyle("-fx-background-color: #2b2d31;");
         Scene scene = new Scene(this.layout);
         this.stage.setScene(scene);
 

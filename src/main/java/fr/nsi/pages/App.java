@@ -125,6 +125,8 @@ public class App extends Panel {
         setCanTakeAllSize(manageBtn);
         setTop(manageBtn);
         manageBtn.setTranslateY(130d);
+        manageBtn.setOnMouseEntered(e -> this.layout.setCursor(Cursor.HAND));
+        manageBtn.setOnMouseExited(e -> this.layout.setCursor(Cursor.DEFAULT));
         manageBtn.setOnMouseClicked(e -> setPage(new ManagePage(), manageBtn));
 
         sidemenu.getChildren().addAll(homeBtn,manageBtn);
@@ -155,6 +157,8 @@ public class App extends Panel {
         setRight(logoutBtn);
         logoutBtn.getStyleClass().add("logout-btn");
         logoutBtn.setGraphic(logoutIcon);
+        logoutBtn.setOnMouseEntered(e -> this.layout.setCursor(Cursor.HAND));
+        logoutBtn.setOnMouseExited(e -> this.layout.setCursor(Cursor.DEFAULT));
         logoutBtn.setOnMouseClicked(e -> {
             if (currentPage instanceof RequestPage) {
                 this.panelManager.showPanel(new ChooseMenu());

@@ -75,12 +75,12 @@
     -fx-opacity: 50%;
 }
 .main-panel{
-    -fx-background-color: #181818;
+    -fx-background-color: #1e1f22;
     -fx-opacity: 85%;
 }
 
 .no-account{
-    -fx-text-fill: #bcc6e7;
+    -fx-text-fill: #b5bac1;
 }
 
 .connect-separator{
