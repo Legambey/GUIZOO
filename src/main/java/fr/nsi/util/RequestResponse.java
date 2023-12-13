@@ -1,13 +1,11 @@
 package fr.nsi.util;
 
-import fr.nsi.content.ManagePage;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.StackPane;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +48,8 @@ public class RequestResponse{
     }
 
     public TableView<RowData> getAsTableView(){
+        if (isError || updated) return null;
+
         // Create TableView
         TableView<RowData> tableView = new TableView<>();
         for (String columnName : data.keySet()) {

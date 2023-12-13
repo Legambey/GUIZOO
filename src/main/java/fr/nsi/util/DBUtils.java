@@ -6,7 +6,6 @@ import javafx.util.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 public class DBUtils {
@@ -43,7 +42,7 @@ public class DBUtils {
         }
         catch (SQLException e){
             connection.close();
-            return new RequestResponse(true, e.getMessage(), false, -1, new HashMap<String, List<Object>>());
+            return new RequestResponse(true, e.getMessage(), false, -1, null);
         }
         connection.close();
         return response;
@@ -60,7 +59,7 @@ public class DBUtils {
         return request(connection, request);
     }
 
-    public static void insert(Connection connection, String table, Object... values) throws SQLException {
+    public static RequestResponse insert(Connection connection, String table, Object... values) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("INSERT INTO ").append(table).append(" VALUES(");
 
@@ -68,10 +67,10 @@ public class DBUtils {
             queryBuilder.append("'").append(value).append("', ");
         }
         queryBuilder.reverse().replace(0, 1, "").reverse().append(")");
-        request(connection, queryBuilder.toString());
+        return request(connection, queryBuilder.toString());
     }
 
-    public static void update(Connection connection, String table, Pair<String, Object>[] values, Pair<String, Object>[] conditions) throws SQLException {
+    public static RequestResponse update(Connection connection, String table, Pair<String, Object>[] values, Pair<String, Object>[] conditions) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("UPDATE ").append(table).append(" SET ");
 
@@ -81,15 +80,15 @@ public class DBUtils {
 
         queryBuilder.append(" WHERE ");
         addConditions(conditions, queryBuilder);
-        request(connection, queryBuilder.toString());
+        return request(connection, queryBuilder.toString());
     }
 
-    public static void delete(Connection connection, String table, Pair<String, Object>[] conditions) throws SQLException {
+    public static RequestResponse delete(Connection connection, String table, Pair<String, Object>[] conditions) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("DELETE FROM ").append(table).append(" WHERE ");
 
         addConditions(conditions, queryBuilder);
-        request(connection, queryBuilder.toString());
+        return request(connection, queryBuilder.toString());
     }
 
     private static void addConditions(Pair<String, Object>[] conditions, StringBuilder queryBuilder) {
