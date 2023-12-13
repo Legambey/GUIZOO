@@ -125,13 +125,8 @@ public class App extends Panel {
         manageBtn.setTranslateY(130d);
         manageBtn.setOnMouseEntered(e -> this.layout.setCursor(Cursor.HAND));
         manageBtn.setOnMouseExited(e -> this.layout.setCursor(Cursor.DEFAULT));
-        manageBtn.setOnMouseClicked(e -> {
-            try {
-                setPage(new ManagePage(DBUtils.request(getConnection(), "select * from lesanimaux")), manageBtn);
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        manageBtn.setOnMouseClicked(e -> setPage(new ManagePage(), manageBtn));
+
 
         sidemenu.getChildren().addAll(homeBtn,manageBtn);
 
