@@ -29,7 +29,7 @@
     -fx-max-height: 40px;
     -fx-max-width: 350px;
     -fx-border-color: transparent;
-    -fx-text-fill: rgb(100,100,100);
+    -fx-text-fill: rgb(150,150,150);
 }
 
 .sidemenu-nav-btn:hover{
