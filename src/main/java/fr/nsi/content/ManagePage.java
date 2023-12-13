@@ -3,24 +3,15 @@ package fr.nsi.content;
 import fr.nsi.pages.App;
 import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
-import fr.nsi.util.RequestResponse;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ManagePage extends ContentPanel {
-    RequestResponse response;
     TableView tableView;
-    public ManagePage(RequestResponse response){
-        this.response = response;
-    }
 
     @Override
     public void init(PanelManager panelManager) {
@@ -46,7 +37,7 @@ public class ManagePage extends ContentPanel {
                 }
             });
 
-            changeTableView(centerPane, tableView, response.getAsTableView());
+            changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + tableBox.getItems().get(0)).getAsTableView());
 
             centerPane.add(tableBox, 0, 0);
         } catch (SQLException e) {
