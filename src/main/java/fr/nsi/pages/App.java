@@ -2,26 +2,26 @@ package fr.nsi.pages;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import fr.nsi.Main;
 import fr.nsi.content.ContentPanel;
 import fr.nsi.content.ManagePage;
 import fr.nsi.content.RequestPage;
 import fr.nsi.panel.Panel;
 import fr.nsi.ui.PanelManager;
+import fr.nsi.util.DBUtils;
 import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 
 import java.io.File;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class App extends Panel {
     GridPane sidemenu = new GridPane();
@@ -106,8 +106,6 @@ public class App extends Panel {
         this.layout.add(navContent, 1, 0);
         navContent.getStyleClass().add("nav-content");
 
-
-
         // Navigation
         homeBtn = new Button("Requêtes SQL");
         homeBtn.getStyleClass().add("sidemenu-nav-btn");
@@ -127,7 +125,13 @@ public class App extends Panel {
         manageBtn.setTranslateY(130d);
         manageBtn.setOnMouseEntered(e -> this.layout.setCursor(Cursor.HAND));
         manageBtn.setOnMouseExited(e -> this.layout.setCursor(Cursor.DEFAULT));
-        manageBtn.setOnMouseClicked(e -> setPage(new ManagePage(), manageBtn));
+        manageBtn.setOnMouseClicked(e -> {
+            try {
+                setPage(new ManagePage(DBUtils.request(getConnection(), "select * from lesanimaux")), manageBtn);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         sidemenu.getChildren().addAll(homeBtn,manageBtn);
 

@@ -6,10 +6,7 @@ import fr.nsi.util.DBUtils;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -19,6 +16,7 @@ import javafx.scene.text.FontWeight;
 import java.sql.SQLException;
 
 public class RequestPage extends ContentPanel {
+    TableView tableView;
     @Override
     public String getStylesheetPath() {
         return "css/content/pages.css";
@@ -76,7 +74,11 @@ public class RequestPage extends ContentPanel {
         button.setOnAction(event -> {
             try {
                 if(textArea.getText().isEmpty()) label1.setText("");
-                else label1.setText(DBUtils.request(App.getConnection(), textArea.getText()));
+                else {
+                    if (tableView != null) vBox.getChildren().remove(tableView);
+                    tableView = DBUtils.request(App.getConnection(), textArea.getText()).getAsTableView();
+                    vBox.getChildren().add(tableView);
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -94,7 +96,9 @@ public class RequestPage extends ContentPanel {
         button2.setOnMouseExited(e -> this.layout.setCursor(Cursor.DEFAULT));
         button2.setOnAction(event -> {
             try {
-                label1.setText(DBUtils.requestExample(App.getConnection(), textArea));
+                if (tableView != null) vBox.getChildren().remove(tableView);
+                tableView =DBUtils.requestExample(App.getConnection(), textArea).getAsTableView();
+                vBox.getChildren().add(tableView);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

@@ -6,10 +6,11 @@ import javafx.util.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class DBUtils {
-    public static String request(Connection connection, String request) throws SQLException {
+    public static RequestResponse request(Connection connection, String request) throws SQLException {
         System.out.println("Executed : " + request);
         RequestResponse response;
         try {
@@ -19,7 +20,7 @@ public class DBUtils {
 
             //Check if the request is a SELECT
             if(stmt.getUpdateCount() == -1){
-                response = new RequestResponse(false, -1, new HashMap<>());
+                response = new RequestResponse(false, "", false, -1, new HashMap<>());
 
                 //Get the results and some information about it
                 ResultSet rs = stmt.getResultSet();
@@ -37,18 +38,18 @@ public class DBUtils {
                 }
             }
             else {
-                response = new RequestResponse(true, stmt.getUpdateCount(), null);
+                response = new RequestResponse(false, "", true, stmt.getUpdateCount(), null);
             }
         }
         catch (SQLException e){
             connection.close();
-            return e.getMessage();
+            return new RequestResponse(true, e.getMessage(), false, -1, new HashMap<String, List<Object>>());
         }
         connection.close();
-        return response.getAsString();
+        return response;
     }
 
-    public static String requestExample(Connection connection, TextArea textArea) throws SQLException {
+    public static RequestResponse requestExample(Connection connection, TextArea textArea) throws SQLException {
         String[] requests = {"SELECT DISTINCT fonction FROM LesCages;",
                 "SELECT nomA FROM LesAnimaux WHERE type = 'leopard';",
                 "SELECT LesAnimaux.nomA, nomM, noCage FROM LesAnimaux JOIN LesMaladies ON (LesAnimaux.nomA=LesMaladies.nomA);",
