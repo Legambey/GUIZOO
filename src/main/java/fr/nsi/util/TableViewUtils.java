@@ -10,8 +10,9 @@ public class TableViewUtils {
     public static List<String> getColumns(TableView<RowData> table){
         List<String> columns = new ArrayList<>();
         for (Object o : table.getColumns()) {
-            TableColumn<Object, ?> column = (TableColumn<Object, ?>) o;
-            columns.add(column.getText());
+            if(o instanceof TableColumn<?, ?> column){
+                columns.add(column.getText());
+            }
         }
 
         return columns;
