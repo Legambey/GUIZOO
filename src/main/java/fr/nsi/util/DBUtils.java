@@ -4,13 +4,10 @@ import javafx.scene.control.TextArea;
 import javafx.util.Pair;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class DBUtils {
-    public static RequestResponse request(Connection connection, String request) throws SQLException {
+    public static RequestResponse request(Connection connection, String request, String table) throws SQLException {
         System.out.println("Executed : " + request);
         RequestResponse response;
         try {
@@ -28,10 +25,11 @@ public class DBUtils {
                 int columnCount = rsMetadata.getColumnCount();
 
                 //Iterate them
+                List<String> columns = getColumnNames(connection, table, false);
                 while(rs.next()){
-                    for (int i = 1; i <= columnCount; i++) {
+                    for (int i = 1; i < columnCount; i++) {
                         //Store them in a Map whose keys are the columns and the values are a list of data
-                        String columnName = rsMetadata.getColumnName(i);
+                        String columnName = columns.get(i);
                         response.getData().computeIfAbsent(columnName, k -> new ArrayList<>());
                         response.getData().get(columnName).add(rs.getObject(i));
                     }
@@ -57,7 +55,7 @@ public class DBUtils {
         Random r = new Random();
         String request = requests[r.nextInt(requests.length)];
         textArea.setText(request);
-        return request(connection, request);
+        return request(connection, request, null);
     }
 
     public static RequestResponse insert(Connection connection, String table, Object... values) throws SQLException {
@@ -68,7 +66,7 @@ public class DBUtils {
             queryBuilder.append("'").append(value).append("', ");
         }
         queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), "").append(")");
-        return request(connection, queryBuilder.toString());
+        return request(connection, queryBuilder.toString(), table);
     }
 
     public static RequestResponse update(Connection connection, String table, Pair<String, Object>[] values, Pair<String, Object>[] conditions) throws SQLException {
@@ -81,7 +79,7 @@ public class DBUtils {
 
         queryBuilder.append(" WHERE ");
         addConditions(conditions, queryBuilder);
-        return request(connection, queryBuilder.toString());
+        return request(connection, queryBuilder.toString(), table);
     }
 
     public static RequestResponse delete(Connection connection, String table, Pair<String, Object>[] conditions) throws SQLException {
@@ -89,10 +87,10 @@ public class DBUtils {
         queryBuilder.append("DELETE FROM ").append(table).append(" WHERE ");
 
         addConditions(conditions, queryBuilder);
-        return request(connection, queryBuilder.toString());
+        return request(connection, queryBuilder.toString(), table);
     }
 
-    /*public static List<String> getColumnNames(Connection connection, String tableName){
+    public static List<String> getColumnNames(Connection connection, String tableName, boolean closeConn) throws SQLException {
         List<String> columnNames = new ArrayList<>();
         try {
             DatabaseMetaData metaData = connection.getMetaData();
@@ -105,8 +103,9 @@ public class DBUtils {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        if(closeConn) connection.close();
         return columnNames;
-    }*/
+    }
 
     public static List<String> getPrimaryKey(Connection connection, String tableName){
         List<String> keys = new ArrayList<>();

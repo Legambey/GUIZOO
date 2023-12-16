@@ -1,5 +1,6 @@
 package fr.nsi.util;
 
+import fr.nsi.pages.App;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -7,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,12 +49,13 @@ public class RequestResponse{
         return repr.toString();
     }
 
-    public TableView<RowData> getAsTableView(){
+    public TableView<RowData> getAsTableView() throws SQLException {
         if (isError || updated) return null;
 
         // Create TableView
         TableView<RowData> tableView = new TableView<>();
-        for (String columnName : data.keySet()) {
+        for (String columnName : DBUtils.getColumnNames(App.getConnection(), "lesAnimaux", true)) {
+            System.out.println(columnName);
             TableColumn<RowData, Object> column = new TableColumn<>(columnName);
             column.setCellValueFactory(cellData -> cellData.getValue().getColumnValue(columnName));
             tableView.getColumns().add(column);
