@@ -92,7 +92,7 @@ public class DBUtils {
         return request(connection, queryBuilder.toString());
     }
 
-    public static List<String> getColumnNames(Connection connection, String tableName){
+    /*public static List<String> getColumnNames(Connection connection, String tableName){
         List<String> columnNames = new ArrayList<>();
         try {
             DatabaseMetaData metaData = connection.getMetaData();
@@ -106,6 +106,22 @@ public class DBUtils {
             throw new RuntimeException(e);
         }
         return columnNames;
+    }*/
+
+    public static List<String> getPrimaryKey(Connection connection, String tableName){
+        List<String> keys = new ArrayList<>();
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet primaryKeys = metaData.getPrimaryKeys(null, null, tableName);
+
+            while (primaryKeys.next()) {
+                String key = primaryKeys.getString("COLUMN_NAME");
+                keys.add(key);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return keys;
     }
 
     private static void addConditions(Pair<String, Object>[] conditions, StringBuilder queryBuilder) {

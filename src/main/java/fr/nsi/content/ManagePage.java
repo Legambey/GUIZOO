@@ -3,6 +3,7 @@ package fr.nsi.content;
 import fr.nsi.pages.App;
 import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
+import fr.nsi.util.RowData;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagePage extends ContentPanel {
-    TableView tableView;
+    TableView<RowData> tableView;
     static String selectedTable;
 
     @Override
