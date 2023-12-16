@@ -1,35 +1,34 @@
 package fr.nsi.util;
 
 import fr.nsi.pages.App;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RequestResponse{
     boolean isError, updated;
     String errorMessage;
+    String table;
     int updateCount;
     Map<String, List<Object>> data;
 
-    public RequestResponse(boolean isError, String errorMessage, boolean updated, int updateCount, Map<String, List<Object>> data) {
+    public RequestResponse(boolean isError, String errorMessage, String table, boolean updated, int updateCount, Map<String, List<Object>> data) {
         this.isError = isError;
         this.errorMessage = errorMessage;
+        this.table = table;
         this.updated = updated;
         this.updateCount = updateCount;
         this.data = data;
     }
 
     public String getAsString(){
-        if (isError) return errorMessage;
-        if (updated) return updateCount + "colonnes affectées";
+        if (isError()) return errorMessage;
+        if (updated()) return updateCount + "colonnes affectées";
 
         StringBuilder repr = new StringBuilder();
         List<String> columns = getColumns();
@@ -50,12 +49,11 @@ public class RequestResponse{
     }
 
     public TableView<RowData> getAsTableView() throws SQLException {
-        if (isError || updated) return null;
+        if (isError() || updated()) return null;
 
         // Create TableView
         TableView<RowData> tableView = new TableView<>();
-        for (String columnName : DBUtils.getColumnNames(App.getConnection(), "lesAnimaux", true)) {
-            System.out.println(columnName);
+        for (String columnName : DBUtils.getColumnNames(App.getConnection(), table, true)) {
             TableColumn<RowData, Object> column = new TableColumn<>(columnName);
             column.setCellValueFactory(cellData -> cellData.getValue().getColumnValue(columnName));
             tableView.getColumns().add(column);
@@ -81,12 +79,21 @@ public class RequestResponse{
     public String getErrorMessage() {
         return errorMessage;
     }
+    public String getTable() {
+        return table;
+    }
+    private boolean updated() {
+        return updated;
+    }
     public List<String> getColumns(){
         return data.keySet().stream().toList();
     }
-
     public Map<String, List<Object>> getData() {
         return data;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
     }
 }
 
