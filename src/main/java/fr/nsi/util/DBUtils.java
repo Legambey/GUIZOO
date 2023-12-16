@@ -16,32 +16,41 @@ public class DBUtils {
             stmt.execute(request);
 
             //Check if the request is a SELECT
-            if(stmt.getUpdateCount() == -1){
-                response = new RequestResponse(false, "", false, -1, new HashMap<>());
-
-                //Get the results and some information about it
+            if(stmt.getUpdateCount() == -1) {
                 ResultSet rs = stmt.getResultSet();
-                ResultSetMetaData rsMetadata = rs.getMetaData();
-                int columnCount = rsMetadata.getColumnCount();
+                response = new RequestResponse(false, "", table, false, -1, new HashMap<>());
 
-                //Iterate them
-                List<String> columns = getColumnNames(connection, table, false);
-                while(rs.next()){
-                    for (int i = 1; i < columnCount; i++) {
-                        //Store them in a Map whose keys are the columns and the values are a list of data
-                        String columnName = columns.get(i);
-                        response.getData().computeIfAbsent(columnName, k -> new ArrayList<>());
-                        response.getData().get(columnName).add(rs.getObject(i));
+                if (table != null) {
+                    List<String> columns = getColumnNames(connection, table, false);
+                    while (rs.next()) {
+                        int i = 1;
+                        for (String columnName : columns) {
+                            response.getData().computeIfAbsent(columnName, k -> new ArrayList<>());
+                            response.getData().get(columnName).add(rs.getObject(i));
+                            i++;
+                        }
                     }
+                }
+                else {
+                    ResultSetMetaData rsMetadata = rs.getMetaData();
+                    int columnCount = rsMetadata.getColumnCount();
+                    while (rs.next()) {
+                        for (int i = 1; i <= columnCount; i++) {
+                            String columnName = rsMetadata.getColumnName(i);
+                            response.getData().computeIfAbsent(columnName, k -> new ArrayList<>());
+                            response.getData().get(columnName).add(rs.getObject(i));
+                        }
+                    }
+                    response.setTable(rsMetadata.getTableName(1));
                 }
             }
             else {
-                response = new RequestResponse(false, "", true, stmt.getUpdateCount(), null);
+                response = new RequestResponse(false, "", table, true, stmt.getUpdateCount(), null);
             }
         }
         catch (SQLException e){
             connection.close();
-            return new RequestResponse(true, e.getMessage(), false, -1, null);
+            return new RequestResponse(true, e.getMessage(), table, false, -1, null);
         }
         connection.close();
         return response;
@@ -95,7 +104,6 @@ public class DBUtils {
         try {
             DatabaseMetaData metaData = connection.getMetaData();
             ResultSet columns = metaData.getColumns(null, null, tableName, null);
-
             while (columns.next()) {
                 String columnName = columns.getString("COLUMN_NAME");
                 columnNames.add(columnName);

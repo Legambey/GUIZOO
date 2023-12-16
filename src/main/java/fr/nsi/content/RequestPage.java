@@ -3,8 +3,9 @@ package fr.nsi.content;
 import fr.nsi.pages.App;
 import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
+import fr.nsi.util.RequestResponse;
+import fr.nsi.util.RowData;
 import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -16,7 +17,7 @@ import javafx.scene.text.FontWeight;
 import java.sql.SQLException;
 
 public class RequestPage extends ContentPanel {
-    TableView tableView;
+    TableView<RowData> tableView;
 
     @Override
     public String getStylesheetPath() {
@@ -77,9 +78,24 @@ public class RequestPage extends ContentPanel {
             try {
                 if(textArea.getText().isEmpty()) label1.setText("");
                 else {
-                    if (tableView != null) vBox.getChildren().remove(tableView);
-                    tableView = DBUtils.request(App.getConnection(), textArea.getText(), null).getAsTableView();
-                    vBox.getChildren().add(tableView);
+                    RequestResponse response = DBUtils.request(App.getConnection(), textArea.getText(), null);
+                    if (tableView != null) {
+                        vBox.getChildren().remove(tableView);
+                        TableView<RowData> newTable = response.getAsTableView();
+                        if (newTable != null) {
+                            tableView = newTable;
+                            vBox.getChildren().add(tableView);
+                        }
+                        else {
+                            vBox.getChildren().remove(tableView);
+                        }
+                    }
+                    else {
+                        tableView = response.getAsTableView();
+                        if (tableView != null) vBox.getChildren().add(tableView);
+                        else label1.setText(response.getAsString());
+                        System.out.println(response.getAsString());
+                    }
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);

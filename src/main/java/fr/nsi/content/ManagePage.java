@@ -3,6 +3,7 @@ package fr.nsi.content;
 import fr.nsi.pages.App;
 import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
+import fr.nsi.util.RequestResponse;
 import fr.nsi.util.RowData;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class ManagePage extends ContentPanel {
     TableView<RowData> tableView;
+    static RequestResponse response;
     static String selectedTable;
 
     @Override
@@ -42,13 +44,15 @@ public class ManagePage extends ContentPanel {
             tableSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
                 try {
                     selectedTable = newValue;
-                    changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + newValue, newValue).getAsTableView());
+                    response = DBUtils.request(App.getConnection(), "select * from " + newValue, newValue);
+                    changeTableView(centerPane, tableView, response.getAsTableView());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
             });
-
-            changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + tableSelector.getItems().get(0), tableSelector.getItems().get(0)).getAsTableView());
+            response = DBUtils.request(App.getConnection(), "select * from " + tableSelector.getItems().get(0), tableSelector.getItems().get(0));
+            System.out.println(response.getErrorMessage());
+            changeTableView(centerPane, tableView, response.getAsTableView());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -60,21 +64,25 @@ public class ManagePage extends ContentPanel {
         return null;
     }
 
-    static void changeTableView(GridPane container, TableView oldTable, TableView newTable) {
+    static void changeTableView(GridPane container, TableView<RowData> oldTable, TableView<RowData> newTable) throws SQLException {
         if(oldTable != null) container.getChildren().remove(oldTable);
         container.add(newTable, 0, 1);
         GridPane columnNames = new GridPane();
         container.add(columnNames, 0, 2);
         int rowIndex = 0;
         List<TextArea> textAreas = new ArrayList<>();
-        for (Object o : newTable.getColumns()) {
-            TableColumn column = (TableColumn) o;
+        for (String column : DBUtils.getColumnNames(App.getConnection(), response.getTable(), true)) {
             TextArea textArea = new TextArea();
             textAreas.add(textArea);
-            textArea.setPromptText(column.getText());
+            textArea.setPromptText(column);
             columnNames.add(textArea, rowIndex, 2);
             rowIndex++;
         }
+        Button button = getAddButton(container, newTable, textAreas);
+        columnNames.add(button, rowIndex, 2);
+    }
+
+    private static Button getAddButton(GridPane container, TableView<RowData> newTable, List<TextArea> textAreas) {
         Button button = new Button("Ajouter");
         button.setMinWidth(100);
         button.setOnAction(event -> {
@@ -82,15 +90,12 @@ public class ManagePage extends ContentPanel {
                 System.out.println(textArea.getText());
             }
             try {
-                List<String> values = new ArrayList<>();
-                for(int i = 0; i < textAreas.size(); i++){
-
-                }
-                DBUtils.insert(App.getConnection(), selectedTable, textAreas.stream().map(TextArea::getText).toArray());
+                DBUtils.insert(App.getConnection(), selectedTable, textAreas.stream().map(TextArea::getText).toArray()).getAsTableView();
+                changeTableView(container, newTable, DBUtils.request(App.getConnection(), "select * from " + selectedTable, selectedTable).getAsTableView());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
-        columnNames.add(button, rowIndex, 2);
+        return button;
     }
 }
