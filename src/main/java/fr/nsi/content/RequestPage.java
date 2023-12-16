@@ -78,7 +78,7 @@ public class RequestPage extends ContentPanel {
                 if(textArea.getText().isEmpty()) label1.setText("");
                 else {
                     if (tableView != null) vBox.getChildren().remove(tableView);
-                    tableView = DBUtils.request(App.getConnection(), textArea.getText()).getAsTableView();
+                    tableView = DBUtils.request(App.getConnection(), textArea.getText(), null).getAsTableView();
                     vBox.getChildren().add(tableView);
                 }
             } catch (SQLException e) {

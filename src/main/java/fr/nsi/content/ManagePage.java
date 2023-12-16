@@ -42,13 +42,13 @@ public class ManagePage extends ContentPanel {
             tableSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
                 try {
                     selectedTable = newValue;
-                    changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + newValue).getAsTableView());
+                    changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + newValue, newValue).getAsTableView());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
             });
 
-            changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + tableSelector.getItems().get(0)).getAsTableView());
+            changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + tableSelector.getItems().get(0), tableSelector.getItems().get(0)).getAsTableView());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
