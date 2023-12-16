@@ -67,7 +67,7 @@ public class DBUtils {
         for (Object value : values) {
             queryBuilder.append("'").append(value).append("', ");
         }
-        queryBuilder.reverse().replace(0, 1, "").reverse().append(")");
+        queryBuilder.replace(queryBuilder.length() - 2, queryBuilder.length(), "").append(")");
         return request(connection, queryBuilder.toString());
     }
 
