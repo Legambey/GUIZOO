@@ -3,6 +3,7 @@ package fr.nsi.content;
 import fr.nsi.pages.App;
 import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
+import fr.nsi.util.RowData;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
@@ -11,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ManagePage extends ContentPanel {
-    TableView tableView;
+    TableView<RowData> tableView;
 
     @Override
     public String getStylesheetPath() {
@@ -56,7 +57,7 @@ public class ManagePage extends ContentPanel {
         return null;
     }
 
-    static void changeTableView(GridPane container, TableView oldTable, TableView newTable) {
+    static void changeTableView(GridPane container, TableView<RowData> oldTable, TableView<RowData> newTable) {
         if(oldTable != null) container.getChildren().remove(oldTable);
         container.add(newTable, 0, 1);
     }}
