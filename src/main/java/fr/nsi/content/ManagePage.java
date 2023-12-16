@@ -14,6 +14,11 @@ public class ManagePage extends ContentPanel {
     TableView tableView;
 
     @Override
+    public String getStylesheetPath() {
+        return "css/content/pages.css";
+    }
+
+    @Override
     public void init(PanelManager panelManager) {
         super.init(panelManager);
 
@@ -21,15 +26,16 @@ public class ManagePage extends ContentPanel {
         this.layout.add(centerPane, 0, 0);
         setCanTakeAllSize(centerPane);
 
+        ComboBox<String> tableSelector = new ComboBox<>();
+
         try {
-            ComboBox<String> tableBox = new ComboBox<>();
             ResultSet tablesResultSet = App.getConnection().getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
             while(tablesResultSet.next()) {
                 String tableName = tablesResultSet.getString("TABLE_NAME");
-                tableBox.getItems().add(tableName);
+                tableSelector.getItems().add(tableName);
             }
-            tableBox.setValue(tableBox.getItems().get(0));
-            tableBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            tableSelector.setValue(tableSelector.getItems().get(0));
+            tableSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
                 try {
                     changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + newValue).getAsTableView());
                 } catch (SQLException e) {
@@ -37,12 +43,12 @@ public class ManagePage extends ContentPanel {
                 }
             });
 
-            changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + tableBox.getItems().get(0)).getAsTableView());
-
-            centerPane.add(tableBox, 0, 0);
+            changeTableView(centerPane, tableView, DBUtils.request(App.getConnection(), "select * from " + tableSelector.getItems().get(0)).getAsTableView());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        centerPane.add(tableSelector, 0, 0);
     }
 
     @Override
