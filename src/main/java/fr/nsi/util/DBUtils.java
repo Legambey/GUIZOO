@@ -6,6 +6,7 @@ import javafx.util.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class DBUtils {
@@ -91,6 +92,22 @@ public class DBUtils {
         return request(connection, queryBuilder.toString());
     }
 
+    public static List<String> getColumnNames(Connection connection, String tableName){
+        List<String> columnNames = new ArrayList<>();
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet columns = metaData.getColumns(null, null, tableName, null);
+
+            while (columns.next()) {
+                String columnName = columns.getString("COLUMN_NAME");
+                columnNames.add(columnName);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return columnNames;
+    }
+
     private static void addConditions(Pair<String, Object>[] conditions, StringBuilder queryBuilder) {
         if(conditions.length == 0) queryBuilder.replace(queryBuilder.length() - 7, queryBuilder.length(), "");
         else {
@@ -100,4 +117,6 @@ public class DBUtils {
         }
         queryBuilder.append("1=1");
     }
+
+
 }
