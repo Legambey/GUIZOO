@@ -85,16 +85,5 @@ public class RequestResponse{
     public Map<String, List<Object>> getData() {
         return data;
     }
-
-    static class RowData {
-        private final Map<String, SimpleObjectProperty<Object>> columnValues = new HashMap<>();
-
-        public ObservableValue<Object> getColumnValue(String columnName) {
-            return columnValues.get(columnName);
-        }
-
-        public void setColumnValue(String columnName, Object value) {
-            columnValues.put(columnName, new SimpleObjectProperty<>(value));
-        }
-    }
 }
+

@@ -17,10 +17,12 @@ import java.sql.SQLException;
 
 public class RequestPage extends ContentPanel {
     TableView tableView;
+
     @Override
     public String getStylesheetPath() {
         return "css/content/pages.css";
     }
+
     @Override
     public void init(PanelManager panelManager) {
         super.init(panelManager);
