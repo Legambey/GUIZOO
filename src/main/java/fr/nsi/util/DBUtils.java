@@ -78,7 +78,7 @@ public class DBUtils {
         return request(connection, queryBuilder.toString(), table);
     }
 
-    public static RequestResponse update(Connection connection, String table, Pair<String, Object>[] values, Pair<String, Object>[] conditions) throws SQLException {
+    public static RequestResponse update(Connection connection, String table, Pair<String, Object>[] values, List<Pair<String, Object>> conditions) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("UPDATE ").append(table).append(" SET ");
 
@@ -91,7 +91,7 @@ public class DBUtils {
         return request(connection, queryBuilder.toString(), table);
     }
 
-    public static RequestResponse delete(Connection connection, String table, Pair<String, Object>[] conditions) throws SQLException {
+    public static RequestResponse delete(Connection connection, String table, List<Pair<String, Object>> conditions) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("DELETE FROM ").append(table).append(" WHERE ");
 
@@ -131,11 +131,11 @@ public class DBUtils {
         return keys;
     }
 
-    private static void addConditions(Pair<String, Object>[] conditions, StringBuilder queryBuilder) {
-        if(conditions.length == 0) queryBuilder.replace(queryBuilder.length() - 7, queryBuilder.length(), "");
+    private static void addConditions(List<Pair<String, Object>> conditions, StringBuilder queryBuilder) {
+        if(conditions.isEmpty()) queryBuilder.replace(queryBuilder.length() - 7, queryBuilder.length(), "");
         else {
             for (Pair<String, Object> cond : conditions) {
-                queryBuilder.append(cond.getKey()).append(" = ").append(cond.getValue()).append(" AND ");
+                queryBuilder.append(cond.getKey()).append(" = '").append(cond.getValue()).append("'").append(" AND ");
             }
         }
         queryBuilder.append("1=1");

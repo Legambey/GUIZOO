@@ -7,9 +7,11 @@ import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
 import fr.nsi.util.RequestResponse;
 import fr.nsi.util.RowData;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -113,12 +115,10 @@ public class ManagePage extends ContentPanel {
         button.setMaxHeight(50);
         insertPane.add(button, 0, 0);
 
-
         GridPane deletePane = new GridPane();
         deletePane.setTranslateY(26);
         container.add(deletePane, 0, 1);
         int rowIndex = 0;
-        Map<Button, RowData> rowButtons = new HashMap<>();
         for (RowData row : newTable.getItems()){
             Button deleteButton = new Button();
             deleteButton.getStyleClass().add("del-btn");
@@ -128,7 +128,18 @@ public class ManagePage extends ContentPanel {
             deleteButton.setMinWidth(24);
             deleteButton.setMinHeight(24);
             deleteButton.setMaxHeight(24);
-            rowButtons.put(deleteButton, row);
+            deleteButton.setOnAction(event -> {
+                try {
+                    String pk = DBUtils.getPrimaryKey(App.getConnection(), selectedTable).get(0);
+                    List<Pair<String, Object>> conditions = new ArrayList<>();
+                    conditions.add(new Pair<>(pk, row.getColumnValue(pk).getValue()));
+                    DBUtils.delete(App.getConnection(), selectedTable, conditions);
+                    changeTableView(container, newTable, DBUtils.request(App.getConnection(), "select * from " + selectedTable, selectedTable).getAsTableView());
+                    deleteButton.setVisible(false);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             deletePane.add(deleteButton, 0, rowIndex);
             rowIndex++;
         }
