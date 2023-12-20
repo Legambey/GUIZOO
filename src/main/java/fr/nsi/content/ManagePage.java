@@ -1,5 +1,7 @@
 package fr.nsi.content;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import fr.nsi.pages.App;
 import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
@@ -74,7 +76,7 @@ public class ManagePage extends ContentPanel {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        gridPane.add(tableSelector, 0, 0);
+        gridPane.add(tableSelector, 1, 0);
         vbox.getChildren().add(gridPane);
     }
 
@@ -85,12 +87,12 @@ public class ManagePage extends ContentPanel {
 
     static void changeTableView(GridPane container, TableView<RowData> oldTable, TableView<RowData> newTable) throws SQLException {
         if(oldTable != null) container.getChildren().remove(oldTable);
-        container.add(newTable, 0, 1);
+        container.add(newTable, 1, 1);
 
         GridPane insertPane = new GridPane();
         insertPane.setTranslateY(10);
-        container.add(insertPane, 0, 2);
-        int columnIndex = 0;
+        container.add(insertPane, 1, 2);
+        int columnIndex = 1;
         List<TextArea> textAreas = new ArrayList<>();
         for (String column : DBUtils.getColumnNames(App.getConnection(), response.getTable(), true)) {
             TextArea textArea = new TextArea();
@@ -98,30 +100,42 @@ public class ManagePage extends ContentPanel {
             textArea.setPromptText(column);
             textArea.setMaxWidth(100);
             textArea.setMaxHeight(50);
-            insertPane.add(textArea, columnIndex, 2);
+            insertPane.add(textArea, columnIndex, 0);
             columnIndex++;
         }
         Button button = getAddButton(container, newTable, textAreas);
-        insertPane.add(button, columnIndex, 2);
+        button.getStyleClass().add("del-btn");
+        FontAwesomeIconView addIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS);
+        addIcon.getStyleClass().add("del-icon");
+        button.setGraphic(addIcon);
+        button.setMinWidth(50);
+        button.setMinHeight(50);
+        button.setMaxHeight(50);
+        insertPane.add(button, 0, 0);
+
 
         GridPane deletePane = new GridPane();
         deletePane.setTranslateY(26);
-        container.add(deletePane, 1, 1);
+        container.add(deletePane, 0, 1);
         int rowIndex = 0;
         Map<Button, RowData> rowButtons = new HashMap<>();
         for (RowData row : newTable.getItems()){
-            Button deleteButton = new Button("Supprimer");
-            deleteButton.setMinWidth(100);
+            Button deleteButton = new Button();
+            deleteButton.getStyleClass().add("del-btn");
+            FontAwesomeIconView delIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+            delIcon.getStyleClass().add("del-icon");
+            deleteButton.setGraphic(delIcon);
+            deleteButton.setMinWidth(24);
             deleteButton.setMinHeight(24);
             deleteButton.setMaxHeight(24);
             rowButtons.put(deleteButton, row);
-            deletePane.add(deleteButton, 2, rowIndex);
+            deletePane.add(deleteButton, 0, rowIndex);
             rowIndex++;
         }
     }
 
     private static Button getAddButton(GridPane container, TableView<RowData> newTable, List<TextArea> textAreas) {
-        Button button = new Button("Ajouter");
+        Button button = new Button();
         button.setMinWidth(100);
         button.setMaxHeight(50);
         button.setOnAction(event -> {

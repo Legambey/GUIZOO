@@ -1,8 +1,8 @@
-.settings-icon{
+.del-icon{
     -fx-fill: white;
 }
-.settings-btn{
-    -fx-background-color: #115ffa;
+.del-btn{
+    -fx-background-color: #8f8f8f;
     -fx-border-radius: 0;
     -fx-background-insets: 0;
 }
