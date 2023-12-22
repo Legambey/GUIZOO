@@ -10,7 +10,5 @@ public interface IPanel {
 
     void onShow();
 
-    String getName();
-
     String getStylesheetPath();
 }

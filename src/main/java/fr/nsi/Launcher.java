@@ -6,20 +6,11 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Launcher extends Application {
-    private static Launcher instance;
     public PanelManager panelManager;
-
-    public Launcher() {
-        instance = this;
-    }
-
-    public static Launcher getInstance() {
-        return instance;
-    }
 
     @Override
     public void start(Stage stage) {
-        this.panelManager = new PanelManager(this, stage);
+        this.panelManager = new PanelManager(stage);
         this.panelManager.init();
         this.panelManager.showPanel(new ChooseMenu());
     }

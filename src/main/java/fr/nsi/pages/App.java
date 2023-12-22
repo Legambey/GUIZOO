@@ -7,7 +7,6 @@ import fr.nsi.content.ManagePage;
 import fr.nsi.content.RequestPage;
 import fr.nsi.panel.Panel;
 import fr.nsi.ui.PanelManager;
-import fr.nsi.util.DBUtils;
 import javafx.geometry.HPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -65,11 +64,6 @@ public class App extends Panel {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
-    }
-
-    @Override
-    public String getName() {
-        return null;
     }
 
     @Override

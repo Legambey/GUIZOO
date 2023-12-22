@@ -123,9 +123,4 @@ public class RequestPage extends ContentPanel {
         });
         gridPane.getChildren().addAll(textArea, button, button2);
     }
-
-    @Override
-    public String getName() {
-        return null;
-    }
 }

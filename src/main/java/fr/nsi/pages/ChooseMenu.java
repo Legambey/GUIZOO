@@ -21,11 +21,6 @@ import javafx.stage.FileChooser;
 import java.io.File;
 
 public class ChooseMenu extends Panel {
-
-    @Override
-    public String getName() {
-        return null;
-    }
     @Override
     public String getStylesheetPath() {
         return "css/login.css";

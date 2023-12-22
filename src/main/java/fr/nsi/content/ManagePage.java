@@ -78,11 +78,6 @@ public class ManagePage extends ContentPanel {
         vbox.getChildren().add(gridPane);
     }
 
-    @Override
-    public String getName() {
-        return null;
-    }
-
     void changeTableView(GridPane container, TableView<RowData> oldTable, TableView<RowData> newTable) throws SQLException {
         if (oldTable != null) container.getChildren().remove(oldTable);
         container.add(newTable, 1, 1);

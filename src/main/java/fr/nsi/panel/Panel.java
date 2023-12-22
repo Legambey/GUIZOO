@@ -34,9 +34,6 @@ public abstract class Panel implements IPanel, IMovable, ITakePLace {
     }
 
     @Override
-    public abstract String getName();
-
-    @Override
     public String getStylesheetPath() {
         return null;
     }
@@ -59,11 +56,6 @@ public abstract class Panel implements IPanel, IMovable, ITakePLace {
     @Override
     public void setBottom(Node node) {
         GridPane.setValignment(node, VPos.BOTTOM);
-    }
-
-    @Override
-    public void setBaseLine(Node node) {
-        GridPane.setValignment(node, VPos.BASELINE);
     }
 
     @Override

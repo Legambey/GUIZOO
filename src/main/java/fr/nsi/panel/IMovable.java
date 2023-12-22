@@ -11,8 +11,6 @@ public interface IMovable {
 
     void setBottom(Node node);
 
-    void setBaseLine(Node node);
-
     void setCenterH(Node node);
 
     void setCenterV(Node node);
