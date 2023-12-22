@@ -7,7 +7,6 @@ import fr.nsi.ui.PanelManager;
 import fr.nsi.util.DBUtils;
 import fr.nsi.util.RequestResponse;
 import fr.nsi.util.RowData;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -16,9 +15,7 @@ import javafx.util.Pair;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ManagePage extends ContentPanel {
     TableView<RowData> tableView;
@@ -50,14 +47,13 @@ public class ManagePage extends ContentPanel {
         scrollPane.setContent(vBox);
     }
 
-    void addContent(VBox vbox){
+    void addContent(VBox vbox) {
         GridPane gridPane = new GridPane();
-
         ComboBox<String> tableSelector = new ComboBox<>();
 
         try {
             ResultSet tablesResultSet = App.getConnection().getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
-            while(tablesResultSet.next()) {
+            while (tablesResultSet.next()) {
                 String tableName = tablesResultSet.getString("TABLE_NAME");
                 tableSelector.getItems().add(tableName);
             }
@@ -87,9 +83,10 @@ public class ManagePage extends ContentPanel {
         return null;
     }
 
-    static void changeTableView(GridPane container, TableView<RowData> oldTable, TableView<RowData> newTable) throws SQLException {
-        if(oldTable != null) container.getChildren().remove(oldTable);
+    void changeTableView(GridPane container, TableView<RowData> oldTable, TableView<RowData> newTable) throws SQLException {
+        if (oldTable != null) container.getChildren().remove(oldTable);
         container.add(newTable, 1, 1);
+        setCanTakeAllSize(newTable);
 
         GridPane insertPane = new GridPane();
         insertPane.setTranslateY(10);
@@ -119,33 +116,13 @@ public class ManagePage extends ContentPanel {
         deletePane.setTranslateY(26);
         container.add(deletePane, 0, 1);
         int rowIndex = 0;
-        for (RowData row : newTable.getItems()){
-            Button deleteButton = new Button();
-            deleteButton.getStyleClass().add("del-btn");
-            FontAwesomeIconView delIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
-            delIcon.getStyleClass().add("del-icon");
-            deleteButton.setGraphic(delIcon);
-            deleteButton.setMinWidth(24);
-            deleteButton.setMinHeight(24);
-            deleteButton.setMaxHeight(24);
-            deleteButton.setOnAction(event -> {
-                try {
-                    String pk = DBUtils.getPrimaryKey(App.getConnection(), selectedTable).get(0);
-                    List<Pair<String, Object>> conditions = new ArrayList<>();
-                    conditions.add(new Pair<>(pk, row.getColumnValue(pk).getValue()));
-                    DBUtils.delete(App.getConnection(), selectedTable, conditions);
-                    changeTableView(container, newTable, DBUtils.request(App.getConnection(), "select * from " + selectedTable, selectedTable).getAsTableView());
-                    deleteButton.setVisible(false);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            deletePane.add(deleteButton, 0, rowIndex);
+        for (RowData row : newTable.getItems()) {
+            deletePane.add(getDeleteButton(row, container, newTable), 0, rowIndex);
             rowIndex++;
         }
     }
 
-    private static Button getAddButton(GridPane container, TableView<RowData> newTable, List<TextArea> textAreas) {
+    private Button getAddButton(GridPane container, TableView<RowData> newTable, List<TextArea> textAreas) {
         Button button = new Button();
         button.setMinWidth(100);
         button.setMaxHeight(50);
@@ -161,5 +138,29 @@ public class ManagePage extends ContentPanel {
             }
         });
         return button;
+    }
+
+    private Button getDeleteButton(RowData row, GridPane container, TableView<RowData> newTable) {
+        Button deleteButton = new Button();
+        deleteButton.getStyleClass().add("del-btn");
+        FontAwesomeIconView delIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        delIcon.getStyleClass().add("del-icon");
+        deleteButton.setGraphic(delIcon);
+        deleteButton.setMinWidth(24);
+        deleteButton.setMinHeight(24);
+        deleteButton.setMaxHeight(24);
+        deleteButton.setOnAction(event -> {
+            deleteButton.setVisible(false);
+            try {
+                String pk = DBUtils.getPrimaryKeys(App.getConnection(), selectedTable).get(0);
+                List<Pair<String, Object>> conditions = new ArrayList<>();
+                conditions.add(new Pair<>(pk, row.getColumnValue(pk).getValue()));
+                DBUtils.delete(App.getConnection(), selectedTable, conditions);
+                changeTableView(container, newTable, DBUtils.request(App.getConnection(), "select * from " + selectedTable, selectedTable).getAsTableView());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return deleteButton;
     }
 }

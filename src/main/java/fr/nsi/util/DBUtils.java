@@ -78,25 +78,19 @@ public class DBUtils {
         return request(connection, queryBuilder.toString(), table);
     }
 
-    public static RequestResponse update(Connection connection, String table, Pair<String, Object>[] values, List<Pair<String, Object>> conditions) throws SQLException {
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("UPDATE ").append(table).append(" SET ");
-
-        for (Pair<String, Object> value : values) {
-            queryBuilder.append(value.getKey()).append(" = ").append(value.getValue()).append(", ");
-        }
-
-        queryBuilder.append(" WHERE ");
-        addConditions(conditions, queryBuilder);
-        return request(connection, queryBuilder.toString(), table);
+    public static void updateOne(Connection connection, String table, Pair<String, ?> value, Pair<String, ?> primaryCondition) throws SQLException {
+        String query = "UPDATE " + table + " SET " +
+                value.getKey() + " = '" + value.getValue() + "'" +
+                " WHERE " + primaryCondition.getKey() + " = '" + primaryCondition.getValue() + "'";
+        request(connection, query, table);
     }
 
-    public static RequestResponse delete(Connection connection, String table, List<Pair<String, Object>> conditions) throws SQLException {
+    public static void delete(Connection connection, String table, List<Pair<String, Object>> conditions) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("DELETE FROM ").append(table).append(" WHERE ");
 
         addConditions(conditions, queryBuilder);
-        return request(connection, queryBuilder.toString(), table);
+        request(connection, queryBuilder.toString(), table);
     }
 
     public static List<String> getColumnNames(Connection connection, String tableName, boolean closeConn) throws SQLException {
@@ -115,7 +109,7 @@ public class DBUtils {
         return columnNames;
     }
 
-    public static List<String> getPrimaryKey(Connection connection, String tableName){
+    public static List<String> getPrimaryKeys(Connection connection, String tableName){
         List<String> keys = new ArrayList<>();
         try {
             DatabaseMetaData metaData = connection.getMetaData();
@@ -125,6 +119,7 @@ public class DBUtils {
                 String key = primaryKeys.getString("COLUMN_NAME");
                 keys.add(key);
             }
+            connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -138,8 +133,6 @@ public class DBUtils {
                 queryBuilder.append(cond.getKey()).append(" = '").append(cond.getValue()).append("'").append(" AND ");
             }
         }
-        queryBuilder.append("1=1");
+        queryBuilder.replace(queryBuilder.length() - 5, queryBuilder.length(), "");
     }
-
-
 }

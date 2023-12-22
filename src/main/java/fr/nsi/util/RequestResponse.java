@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.Pair;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -53,9 +55,10 @@ public class RequestResponse{
 
         // Create TableView
         TableView<RowData> tableView = new TableView<>();
-        for (String columnName : DBUtils.getColumnNames(App.getConnection(), table, true)) {
-            TableColumn<RowData, Object> column = new TableColumn<>(columnName);
-            column.setCellValueFactory(cellData -> cellData.getValue().getColumnValue(columnName));
+        tableView.setEditable(true);
+
+        for (String columnName : DBUtils.getColumnNames(App.getConnection(), getTable(), true)) {
+            TableColumn<RowData, String> column = getTableColumn(columnName);
             tableView.getColumns().add(column);
         }
 
@@ -64,12 +67,11 @@ public class RequestResponse{
         for (int i = 0; i < data.get(getColumns().get(0)).size(); i++) {
             RowData row = new RowData();
             for (String columnName : data.keySet()) {
-                row.setColumnValue(columnName, data.get(columnName).get(i));
+                row.setColumnValue(columnName, data.get(columnName).get(i).toString());
             }
             rowData.add(row);
         }
         tableView.setItems(rowData);
-
         return tableView;
     }
 
@@ -94,6 +96,25 @@ public class RequestResponse{
 
     public void setTable(String table) {
         this.table = table;
+    }
+
+    private TableColumn<RowData, String> getTableColumn(String columnName) {
+        TableColumn<RowData, String> column = new TableColumn<>(columnName);
+        column.setCellFactory(TextFieldTableCell.forTableColumn());
+        column.setOnEditCommit(event -> {
+            try {
+                RowData row = event.getRowValue();
+                String primaryKey = DBUtils.getPrimaryKeys(App.getConnection(), getTable()).get(0);
+                Object pkData = row.getColumnValue(primaryKey).getValue();
+                row.setColumnValue(columnName, event.getNewValue());
+                Pair<String, ?> value = new Pair<>(columnName, event.getNewValue());
+                DBUtils.updateOne(App.getConnection(), getTable(), value, new Pair<>(primaryKey, pkData));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        column.setCellValueFactory(cellData -> cellData.getValue().getColumnValue(columnName));
+        return column;
     }
 }
 
