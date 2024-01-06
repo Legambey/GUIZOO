@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class App extends Panel {
-    GridPane sidemenu = new GridPane();
+    GridPane sideMenu = new GridPane();
     GridPane navContent = new GridPane();
 
     Node activeLink = null;
@@ -85,11 +85,11 @@ public class App extends Panel {
         this.layout.getColumnConstraints().addAll(columnConstraints, new ColumnConstraints());
 
         // Side menu
-        this.layout.add(sidemenu, 0, 0);
-        sidemenu.getStyleClass().add("sidemenu");
-        setLeft(sidemenu);
-        setCenterH(sidemenu);
-        setCenterV(sidemenu);
+        this.layout.add(sideMenu, 0, 0);
+        sideMenu.getStyleClass().add("sidemenu");
+        setLeft(sideMenu);
+        setCenterH(sideMenu);
+        setCenterV(sideMenu);
 
         // Background Image
         GridPane bgImage = new GridPane();
@@ -122,7 +122,7 @@ public class App extends Panel {
         manageBtn.setOnMouseClicked(e -> setPage(new ManagePage(), manageBtn));
 
 
-        sidemenu.getChildren().addAll(homeBtn,manageBtn);
+        sideMenu.getChildren().addAll(homeBtn,manageBtn);
 
         // Pseudo + avatar
         GridPane userPane = new GridPane();
@@ -159,7 +159,7 @@ public class App extends Panel {
         });
         userPane.getChildren().add(logoutBtn);
 
-        sidemenu.getChildren().addAll(userPane);
+        sideMenu.getChildren().addAll(userPane);
     }
 
     @Override

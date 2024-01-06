@@ -19,6 +19,7 @@ import java.util.List;
 
 public class ManagePage extends ContentPanel {
     TableView<RowData> tableView;
+    List<Button> deleteButtons = new ArrayList<>();
     static RequestResponse response;
     static String selectedTable;
 
@@ -80,6 +81,10 @@ public class ManagePage extends ContentPanel {
 
     void changeTableView(GridPane container, TableView<RowData> oldTable, TableView<RowData> newTable) throws SQLException {
         if (oldTable != null) container.getChildren().remove(oldTable);
+        for (Button button : deleteButtons) {
+            button.setVisible(false);
+        }
+        deleteButtons.clear();
         container.add(newTable, 1, 1);
         setCanTakeAllSize(newTable);
 
@@ -156,6 +161,7 @@ public class ManagePage extends ContentPanel {
                 throw new RuntimeException(e);
             }
         });
+        deleteButtons.add(deleteButton);
         return deleteButton;
     }
 }
